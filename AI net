@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+class NeuralNetwork {
+private:
+    vector<vector<double>> weights;
+    vector<double> biases;
+    int numLayers;
+
+public:
+    NeuralNetwork(const vector<int>& layers) {
+        numLayers = layers.size();
+        for (int i = 1; i < numLayers; ++i) {
+            weights.push_back(vector<double>(layers[i], 0.0));
+            biases.push_back(0.0);
+        }
+    }
+
+    double sigmoid(double x) {
+        return 1.0 / (1.0 + exp(-x));
+    }
+
+    vector<double> feedforward(const vector<double>& input) {
+        vector<double> activations = input;
+        for (int i = 0; i < numLayers - 1; ++i) {
+            vector<double> new_activations(weights[i].size(), 0.0);
+            for (int j = 0; j < weights[i].size(); ++j) {
+                new_activations[j] = sigmoid(activations[i] * weights[i][j] + biases[i]);
+            }
+            activations = new_activations;
+        }
+        return activations;
+    }
+};
+
+int main() {
+    vector<int> layers = {2, 3, 1}; // 2 input neurons, 3 neurons in hidden layer, 1 output neuron
+    NeuralNetwork nn(layers);
+    vector<double> input = {0.5, 0.7};
+    vector<double> output = nn.feedforward(input);
+    cout << "Output: " << output[0] << endl;
+    return 0;
+}
